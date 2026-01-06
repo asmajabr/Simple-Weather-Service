@@ -55,11 +55,13 @@ jobs:
 
       - name: PyTest + coverage (fail under 80%)
         run: |
+
           python -m pytest --maxfail=1 --disable-warnings \
-                          --cov=src \
+                          --cov \
                           --cov-report=term-missing:skip-covered \
                           --cov-report=xml \
                           --cov-fail-under=80
+
 
       - name: Upload coverage report (artifact)
         if: success()

@@ -1,0 +1,9 @@
+
+[run]
+source = src
+omit =
+    src/server.py
+    src/__init__.py   # empty package initializer; not meaningful for coverage
+
+[report]
+show_missing = True
