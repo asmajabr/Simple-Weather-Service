@@ -1,10 +1,18 @@
 # tests/integration/test_forecast.py
+
+# Standard library
 from http import HTTPStatus
-from fastapi.testclient import TestClient
+
 import pytest
+
+# Third-party
+from fastapi.testclient import TestClient
+
+# Local
 from src.app import app
 
 client = TestClient(app)
+
 
 def test_forecast_daily_values():
     r = client.get("/weather/forecast?lat=51.5072&lon=-0.1276&days=3")

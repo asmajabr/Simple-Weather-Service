@@ -1,6 +1,12 @@
 # src/server.py - entrypoint for local running
+
+# 1) Standard library
 import os
+
+# 2) Third-party
 import uvicorn
+
+# 3) Local
 from src.app import app
 
 if __name__ == "__main__":
