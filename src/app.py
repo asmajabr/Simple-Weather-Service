@@ -11,6 +11,17 @@ from .helpers import code_to_text
 app = FastAPI(title="Simple Weather API (clean)", version="0.1.0")
 
 
+@app.get("/")
+def root():
+    return {
+        "service": "Simple Weather API",
+        "docs": "/docs",
+        "health": "/health",
+        "endpoints": ["/weather/current", "/weather/forecast", "/weather/hourly"]
+    }
+
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
