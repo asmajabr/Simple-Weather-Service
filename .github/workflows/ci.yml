@@ -1,37 +1,32 @@
-name: CI
+name: lint-and-test
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, protected/workflow ]
   pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+    branches: [ main, protected/workflow ]
 
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Python
+
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - name: Install deps
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      - name: Run ruff
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && pip install -r requirements.txt
+
+      - name: Lint (ruff)
         run: |
           ruff check .
+          # if you want ruff to auto-fix where possible uncomment the next line:
+          # ruff check . --fix
+
       - name: Run tests
-        run: |
-          pytest --maxfail=1 --disable-warnings --quiet
-  build-image:
-    needs: lint-and-test
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build Docker image
-        run: |
-          docker build -t simple-weather:ci .
+        run: pytest --maxfail=1 --disable-warnings --quiet
