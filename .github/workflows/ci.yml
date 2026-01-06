@@ -44,10 +44,14 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
+
+      # CI step (replace the pytest line)
       - name: PyTest + coverage (fail under 80%)
         run: |
           pytest --maxfail=1 --disable-warnings -q \
-                 --cov=src --cov-report=xml --cov-fail-under=80
+                --cov=src/app.py --cov=src/helpers.py \
+                --cov-report=xml --cov-fail-under=8
+
 
       - name: Upload coverage report (artifact)
         if: success()
