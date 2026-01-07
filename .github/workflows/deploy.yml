@@ -1,4 +1,5 @@
 
+# .github/workflows/deploy.yml
 name: deploy
 
 on:
@@ -8,12 +9,20 @@ on:
   workflow_dispatch:
 
 jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: |
+          docker --version
+          docker build -t simple-weather:latest .
+
   deploy:
     runs-on: ubuntu-latest
     needs: docker-build
     steps:
-      - uses: actions/checkout@v4
-      - name: Build Docker image (deploy simulation)
-        run: |
-          docker build -t simple-weather:latest .
-          echo "Simulated deployment complete"
+      - name: Simulate deployment
+        run: echo "Simulated deployment complete"
+
+
