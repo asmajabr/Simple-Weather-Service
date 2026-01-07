@@ -1,16 +1,38 @@
 # src/app.py - deterministic FastAPI app (no external calls)
+
+# 1) Standard library
+
+# 2) Third-party
 from fastapi import FastAPI, Query
+
+# 3) Local
 from .helpers import code_to_text
 
 app = FastAPI(title="Simple Weather API (clean)", version="0.1.0")
+
+
+@app.get("/")
+def root():
+    return {
+        "service": "Simple Weather API",
+        "docs": "/docs",
+        "health": "/health",
+        "endpoints": ["/weather/current", "/weather/forecast", "/weather/hourly"]
+    }
+
+
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
+
 @app.get("/weather/current")
-def current_weather(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-180, le=180)):
-    """Return a deterministic sample "current" weather response for testing."""
+def current_weather(
+    lat: float = Query(..., ge=-90, le=90),
+    lon: float = Query(..., ge=-180, le=180),
+) -> dict[str, object]:
+    """Return a deterministic sample 'current' weather response for testing."""
     sample = {
         "source": "open-meteo",
         "current": {
@@ -22,8 +44,14 @@ def current_weather(lat: float = Query(..., ge=-90, le=90), lon: float = Query(.
     }
     return sample
 
+
 @app.get("/weather/forecast")
-def forecast(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-180, le=180), days: int = Query(3, ge=1, le=7)):
+def forecast(
+    lat: float = Query(..., ge=-90, le=90),
+    lon: float = Query(..., ge=-180, le=180),
+    days: int = Query(3, ge=1, le=7),
+) -> dict[str, object]:
+    """Return deterministic daily forecast sample."""
     daily = {
         "time": ["2026-01-01", "2026-01-02", "2026-01-03"],
         "temperature_2m_max": [20.0, 21.0, 19.5],
@@ -33,8 +61,13 @@ def forecast(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=
     }
     return {"source": "open-meteo", "daily": daily}
 
+
 @app.get("/weather/hourly")
-def hourly(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-180, le=180), vars: str = Query("temperature_2m,windspeed_10m")):
+def hourly(
+    lat: float = Query(..., ge=-90, le=90),
+    lon: float = Query(..., ge=-180, le=180),
+    vars: str = Query("temperature_2m,windspeed_10m"),
+) -> dict[str, object]:
     selected = [v.strip() for v in vars.split(",") if v.strip()]
     hourly = {
         "temperature_2m": [17.3, 17.0, 16.8],
